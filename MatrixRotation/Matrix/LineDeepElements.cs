@@ -1,4 +1,7 @@
-﻿namespace MatrixRotation.Matrix
+﻿using System;
+using System.Drawing;
+
+namespace MatrixRotation.Matrix
 {
     public class LineDeepElements
     {
@@ -61,5 +64,56 @@
         }
 
         private int GetPositiveNumberOrZero(int number) => (number >= 0) ? number : 0;
+
+        public DeepPoint GetDeepPointFromLinePositionElement(int position)
+        {
+            if (position > TotalElements)
+                throw new ArgumentOutOfRangeException($"the required number between 1 - {TotalElements}");
+
+            Point point = GetPointsFromLinePositionElement(position);
+
+            return new DeepPoint(point.X, point.Y, ToString());
+        }
+
+        private Point GetPointsFromLinePositionElement(int position)
+        {
+            int currentNumberElement = 0;
+
+            if (ElementsTopToBottom >= position)
+            {
+                return new Point(
+                    LineDeepPoints.StartDeepPoint.Row + position - 1,
+                    LineDeepPoints.StartDeepPoint.Column);
+            }
+
+            currentNumberElement = ElementsTopToBottom;
+
+            if (currentNumberElement + ElementsLeftToRight >= position)
+            {
+                return new Point(
+                    LineDeepPoints.EndDeepPoint.Row,
+                    LineDeepPoints.StartDeepPoint.Column + (position - currentNumberElement));
+            }
+
+            currentNumberElement += ElementsLeftToRight;
+
+            if (currentNumberElement + ElementsTopToBottom > position)
+            {
+                return new Point(
+                   LineDeepPoints.EndDeepPoint.Row - (position - currentNumberElement),
+                   LineDeepPoints.EndDeepPoint.Column);
+            }
+
+            currentNumberElement += ElementsBottomToTop;
+
+            if (currentNumberElement + ElementsRightToLeft >= position)
+            {
+                return new Point(
+                   LineDeepPoints.StartDeepPoint.Row,
+                   LineDeepPoints.EndDeepPoint.Column - (position - currentNumberElement));
+            }
+
+            throw new NullReferenceException();
+        }
     }
 }
