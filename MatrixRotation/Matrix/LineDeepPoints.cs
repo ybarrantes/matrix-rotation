@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace MatrixRotation.Matrix
 {
@@ -11,18 +9,14 @@ namespace MatrixRotation.Matrix
         public int Deep { get; }
         public bool IsLastDeep { get; }
 
-        public LineDeepPoints(List<List<int>> matrix, int deep)
+        public LineDeepPoints(Matrix matrix, int deep)
         {
-            int rows = matrix.Count();
-            int cols = matrix[0].Count();
-            int maxDeep = (int)Math.Ceiling(Math.Min(rows, cols) / 2d);
-
-            AbortIfDeepOutOfRange(deep, maxDeep);
+            AbortIfDeepOutOfRange(deep, matrix.Deep);
 
             Deep = deep;
-            IsLastDeep = deep == maxDeep - 1;
+            IsLastDeep = (deep == matrix.Deep - 1);
             StartDeepPoint = new DeepPoint(deep, deep);
-            EndDeepPoint = new DeepPoint(rows - 1 - deep, cols - 1 - deep);
+            EndDeepPoint = new DeepPoint(matrix.Rows - 1 - deep, matrix.Columns - 1 - deep);
         }
 
         private void AbortIfDeepOutOfRange(int deep, int maxDeep)

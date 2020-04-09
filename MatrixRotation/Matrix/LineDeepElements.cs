@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace MatrixRotation.Matrix
+﻿namespace MatrixRotation.Matrix
 {
     public class LineDeepElements
     {
@@ -44,7 +42,7 @@ namespace MatrixRotation.Matrix
             SetNumberElements();
         }
 
-        public LineDeepElements(List<List<int>> matrix, int deep)
+        public LineDeepElements(Matrix matrix, int deep)
         {
             LineDeepPoints = new LineDeepPoints(matrix, deep);
 

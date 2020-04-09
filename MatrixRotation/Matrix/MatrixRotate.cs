@@ -1,121 +1,139 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace MatrixRotation.Matrix
 {
     public class MatrixRotate
     {
-        private readonly List<List<int>> _matrix;
+        private Matrix _matrix;
+        public Matrix Matrix => _matrix;
+        private bool _printMatrix = false;
 
-        public int MatrixDeep { get; internal set; } = 0;
-        public List<List<int>> OriginalMatrix => _matrix;
-
-        public int MatrixRows { get; internal set; } = 0;
-        public int MatrixColumns { get; internal set; } = 0;
-
-        public MatrixRotate(List<List<int>> matrix)
+        public MatrixRotate(Matrix matrix, bool printMatrix = false)
         {
             _matrix = matrix;
-
-            SetMatrixLimits();
+            _printMatrix = printMatrix;
         }
 
-        private void SetMatrixLimits()
+        public Matrix Rotate(int numberRotations)
         {
-            MatrixRows = OriginalMatrix.Count();
-            MatrixColumns = OriginalMatrix[0].Count();
-            MatrixDeep = (int)Math.Ceiling(Math.Min(MatrixRows, MatrixColumns) / 2d);
-        }
-
-        public List<List<int>> Rotate(int numberRotations)
-        {
-            List<List<int>> rotatedMatrix = GenericCopier<List<List<int>>>.DeepCopy(OriginalMatrix);
+            PrintMatrix();
 
             if (numberRotations <= 0)
             {
                 System.Diagnostics.Debug.WriteLine("-- Not rotate!!!");
-                return rotatedMatrix;
+                return Matrix;
             }
 
-            for (int i = 0; i < MatrixDeep; i++)
+            for (int i = 0; i < Matrix.Deep; i++)
             {
-                RotateMatrixLineDeep(rotatedMatrix, i, numberRotations);
+                RotateMatrixLineDeep(i, numberRotations);
             }
 
-            return rotatedMatrix;
+            PrintMatrix();
+
+            return Matrix;
         }
 
-        private void RotateMatrixLineDeep(List<List<int>> matrix, int deep, int numberRotations)
+        private void PrintMatrix()
         {
-            LineDeepElements lineDeepElements = new LineDeepElements(matrix, deep);
+            if (_printMatrix)
+                Matrix.Print();
+        }
+
+        private void RotateMatrixLineDeep(int deep, int numberRotations)
+        {
+            var watch = System.Diagnostics.Stopwatch.StartNew();
+
+            LineDeepElements lineDeepElements = new LineDeepElements(this.Matrix, deep);
 
             int realNumberRotation = Math.Abs(numberRotations) % lineDeepElements.TotalElements;
-
-            System.Diagnostics.Debug.WriteLine($"-- rotations: {realNumberRotation}");
 
             // if realNumberRotation is 0 then not apply rotation, line deep keep same position
             if (realNumberRotation > 0)
             {
-                for (int element = 1; element <= lineDeepElements.TotalElements; element++)
-                {
-                    DeepPoint positionElementOriginChange = GetDeepPointFromNumberOfElement(matrix, lineDeepElements, element);
+                DeepPoint positionElementOriginChange = null;
+                DeepPoint firstElementOriginChange = null;
 
-                    int newPosition = element + realNumberRotation;
+                int indexRotation = 1;
+                int nextPosition = 0;
+                var nextValue = Matrix.GetElementFromRowColumn(0, 0);
+
+                do
+                {
+                    if(positionElementOriginChange == null || positionElementOriginChange.Equals(firstElementOriginChange))
+                    {
+                        positionElementOriginChange = GetDeepPointFromNumberOfElement(lineDeepElements, ++nextPosition);
+                        firstElementOriginChange = (DeepPoint)positionElementOriginChange.Clone();
+                        nextValue = this.Matrix.GetElementFromDeepPoint(positionElementOriginChange);
+                    }
+
+                    int newPosition = nextPosition + realNumberRotation;
 
                     if (newPosition > lineDeepElements.TotalElements)
                         newPosition = newPosition - lineDeepElements.TotalElements;
 
-                    DeepPoint positionElementDestinationChange = GetDeepPointFromNumberOfElement(matrix, lineDeepElements, newPosition);
+                    DeepPoint positionElementDestinationChange = GetDeepPointFromNumberOfElement(lineDeepElements, newPosition);
 
-                    int value = OriginalMatrix[positionElementOriginChange.Row][positionElementOriginChange.Column];
+                    var currentValue = this.Matrix.GetElementFromDeepPoint(positionElementDestinationChange);
+                    this.Matrix.SetElementFromDeepPoint(positionElementDestinationChange, nextValue);
 
-                    matrix[positionElementDestinationChange.Row][positionElementDestinationChange.Column] = value;
-                }
+                    nextValue = currentValue;
+                    nextPosition = newPosition;
+
+                    positionElementOriginChange = (DeepPoint)positionElementDestinationChange.Clone();
+                } while (indexRotation++ < lineDeepElements.TotalElements);
             }
             else
                 System.Diagnostics.Debug.WriteLine("-- Not rotate!!!");
+
+            watch.Stop();
+
+            System.Diagnostics.Debug.WriteLine($"-- rotations: {realNumberRotation} - deep: {deep} - elements: {lineDeepElements.TotalElements}. Time exec LineDeep: {watch.ElapsedMilliseconds} ms");
         }
 
-        private DeepPoint GetDeepPointFromNumberOfElement(List<List<int>> matrix, LineDeepElements lineDeepElements, int number)
+        private DeepPoint GetDeepPointFromNumberOfElement(LineDeepElements lineDeepElements, int linePosition)
         {
-            if (number > lineDeepElements.TotalElements)
+            if (linePosition > lineDeepElements.TotalElements)
                 throw new ArgumentOutOfRangeException($"the required number between 1 - {lineDeepElements.TotalElements}");
 
             int currentNumberElement = 0;
 
-            if (lineDeepElements.ElementsTopToBottom >= number)
+            if (lineDeepElements.ElementsTopToBottom >= linePosition)
             {
                 return new DeepPoint(
-                    lineDeepElements.LineDeepPoints.StartDeepPoint.Row + number - 1,
-                    lineDeepElements.LineDeepPoints.StartDeepPoint.Column);
+                    lineDeepElements.LineDeepPoints.StartDeepPoint.Row + linePosition - 1,
+                    lineDeepElements.LineDeepPoints.StartDeepPoint.Column,
+                    linePosition.ToString());
             }
 
             currentNumberElement = lineDeepElements.ElementsTopToBottom;
 
-            if (currentNumberElement + lineDeepElements.ElementsLeftToRight >= number)
+            if (currentNumberElement + lineDeepElements.ElementsLeftToRight >= linePosition)
             {
                 return new DeepPoint(
                     lineDeepElements.LineDeepPoints.EndDeepPoint.Row,
-                    lineDeepElements.LineDeepPoints.StartDeepPoint.Column + (number - currentNumberElement));
+                    lineDeepElements.LineDeepPoints.StartDeepPoint.Column + (linePosition - currentNumberElement),
+                    linePosition.ToString());
             }
 
             currentNumberElement += lineDeepElements.ElementsLeftToRight;
 
-            if (currentNumberElement + lineDeepElements.ElementsTopToBottom > number)
+            if (currentNumberElement + lineDeepElements.ElementsTopToBottom > linePosition)
             {
                 return new DeepPoint(
-                   lineDeepElements.LineDeepPoints.EndDeepPoint.Row - (number - currentNumberElement),
-                   lineDeepElements.LineDeepPoints.EndDeepPoint.Column);
+                   lineDeepElements.LineDeepPoints.EndDeepPoint.Row - (linePosition - currentNumberElement),
+                   lineDeepElements.LineDeepPoints.EndDeepPoint.Column,
+                   linePosition.ToString());
             }
 
             currentNumberElement += lineDeepElements.ElementsBottomToTop;
 
-            if (currentNumberElement + lineDeepElements.ElementsRightToLeft >= number)
+            if (currentNumberElement + lineDeepElements.ElementsRightToLeft >= linePosition)
             {
                 return new DeepPoint(
                    lineDeepElements.LineDeepPoints.StartDeepPoint.Row,
-                   lineDeepElements.LineDeepPoints.EndDeepPoint.Column - (number - currentNumberElement));
+                   lineDeepElements.LineDeepPoints.EndDeepPoint.Column - (linePosition - currentNumberElement),
+                   linePosition.ToString());
             }
 
             throw new NullReferenceException();

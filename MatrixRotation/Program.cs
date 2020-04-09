@@ -1,8 +1,5 @@
-﻿using MatrixRotation;
-using MatrixRotation.Matrix;
+﻿using MatrixRotation.Matrix;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace RotacionMatricial
 {
@@ -11,50 +8,41 @@ namespace RotacionMatricial
         static void Main(string[] args)
         {
             Console.Write("Insert number of rows: ");
-
-            int m = Convert.ToInt32(Console.ReadLine().TrimEnd());
+            int rows = Convert.ToInt32(Console.ReadLine().TrimEnd());
 
             Console.Write("\r\nInsert number of columns: ");
-
-            int n = Convert.ToInt32(Console.ReadLine().TrimEnd());
+            int columns = Convert.ToInt32(Console.ReadLine().TrimEnd());
 
             Console.Write("\r\nInsert number of rotations: ");
+            int rotations = Convert.ToInt32(Console.ReadLine().TrimEnd());
 
-            int r = Convert.ToInt32(Console.ReadLine().TrimEnd());
+            bool random = GetBoolQuestion("Use random?");
 
-            Console.Write("\r\nGenerate random numbers (y, n): ");
+            bool print = GetBoolQuestion("Print matrix?");
 
-            string strRandom = Console.ReadLine().TrimEnd();
-
-            bool random = (strRandom.ToLower().Trim() == "y");
-
-            List<List<int>> matrix = MatrixGenerator.Instance.Generate(m, n, random);
-
-            /*List<List<int>> matrix = new List<List<int>>
-            {
-                new List<int> { 1, 2, 3, 4 },
-                new List<int> { 7, 8, 9, 10 },
-                new List<int> { 13, 14, 15, 16 },
-                new List<int> { 19, 20, 21, 22 },
-                new List<int> { 25, 26, 27, 28 }
-            };*/
-
-            matrixRotation(matrix, r);
+            matrixRotation(rows, columns, random, rotations, print);
         }
 
-        static void matrixRotation(List<List<int>> matrix, int r)
+        private static bool GetBoolQuestion(string message)
         {
-            MatrixPrinter.Instance.Print(matrix);
+            Console.Write($"\r\n{message} (yes = 1, no = any key): ");
+            string strResponse = Console.ReadLine().TrimEnd();
 
-            MatrixRotation.Matrix.MatrixRotate matrixRotation = new MatrixRotation.Matrix.MatrixRotate(matrix);
+            return (strResponse.ToLower().Trim() == "1");
+        }
 
-            List<List<int>> matrixResult = matrixRotation.Rotate(r);
+        static void matrixRotation(int rows, int columns, bool random, int rotations, bool print)
+        {
+            var watch = System.Diagnostics.Stopwatch.StartNew();
 
-            Console.WriteLine("");
+            Matrix matrix = new Matrix(rows, columns, random);
 
-            MatrixPrinter.Instance.Print(matrixResult);
+            MatrixRotate matrixRotation = new MatrixRotate(matrix, print);
+            matrixRotation.Rotate(rotations);
 
-            Console.WriteLine("");
+            watch.Stop();
+
+            Console.Write($"\r\n Time execution: {watch.ElapsedMilliseconds} ms \r\n");
         }
 
     }
