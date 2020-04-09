@@ -1,4 +1,4 @@
-using MatrixRotation.Matrix;
+using MatrixRotation.Matrix2D;
 using NUnit.Framework;
 using System.Collections.Generic;
 

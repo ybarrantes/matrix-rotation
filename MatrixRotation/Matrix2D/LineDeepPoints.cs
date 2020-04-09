@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace MatrixRotation.Matrix
+namespace MatrixRotation.Matrix2D
 {
     public class LineDeepPoints
     {

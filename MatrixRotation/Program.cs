@@ -1,7 +1,7 @@
-﻿using MatrixRotation.Matrix;
+﻿using MatrixRotation.Matrix2D;
 using System;
 
-namespace RotacionMatricial
+namespace MatrixRotation
 {
     public class Program
     {

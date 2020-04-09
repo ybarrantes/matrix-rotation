@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
 
-namespace MatrixRotation.Matrix
+namespace MatrixRotation.Matrix2D
 {
     public class DeepPoint : ICloneable, IEquatable<DeepPoint>
     {

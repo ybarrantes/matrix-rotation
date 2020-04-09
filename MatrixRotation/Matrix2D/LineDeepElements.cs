@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Drawing;
 
-namespace MatrixRotation.Matrix
+namespace MatrixRotation.Matrix2D
 {
     public class LineDeepElements
     {
