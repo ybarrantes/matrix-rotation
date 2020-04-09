@@ -8,7 +8,7 @@ namespace MatrixRotation.Matrix
         private int _matrixRows = 0;
         private int _matrixColumns = 0;
 
-        public byte[,] GeneratedMatrix => _matrix;
+        public byte[,] GetGeneratedMatrix() => _matrix;
 
         public int Rows
         {
@@ -47,10 +47,10 @@ namespace MatrixRotation.Matrix
 
         public Matrix(int rows, int columns, bool random = false)
         {
-            GetGeneratedMatrix(rows, columns, random);
+            GenerateMatrix(rows, columns, random);
         }
 
-        private byte[,] GetGeneratedMatrix(int rows, int columns, bool random = false)
+        private byte[,] GenerateMatrix(int rows, int columns, bool random = false)
         {
             var watch = System.Diagnostics.Stopwatch.StartNew();
 

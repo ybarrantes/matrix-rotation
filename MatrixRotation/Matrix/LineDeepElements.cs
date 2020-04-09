@@ -57,7 +57,7 @@
 
             ElementsBottomToTop = (ElementsLeftToRight > 0) ? ElementsTopToBottom - 1 : 0;
 
-            ElementsRightToLeft = ElementsLeftToRight - 1;
+            ElementsRightToLeft = (ElementsBottomToTop > 0) ? ElementsLeftToRight - 1 : 0;
         }
 
         private int GetPositiveNumberOrZero(int number) => (number >= 0) ? number : 0;
