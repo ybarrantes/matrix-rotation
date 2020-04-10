@@ -1,34 +1,38 @@
 using MatrixRotation.Matrix2D;
 using NUnit.Framework;
+using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace IntegrationTest
 {
     public class MatrixRotation
     {
-        private Matrix Rotate(int rows, int cols, int rotations)
+        private async Task<Matrix> Rotate(int rows, int cols, int rotations)
         {
             Matrix matrix = new Matrix(rows, cols);
 
             MatrixRotate matrixRotate = new MatrixRotate(matrix);
 
-            matrixRotate.Rotate(rotations);
+            await matrixRotate.Rotate(rotations);
 
             return matrixRotate.Matrix;
         }
 
         [Test]
-        public void When_Matrix_1x1_Rotate_1()
+        public async Task When_Matrix_1x1_Rotate_1()
         {
-            var result = Rotate(1, 1, 1).GetGeneratedMatrix();
+            var matrix = await Rotate(1, 1, 1);
+            var result = matrix.GetGeneratedMatrix();
 
             Assert.AreEqual(1, result[0, 0]);
         }
 
         [Test]
-        public void When_Matrix_5x1_Rotate_1()
+        public async Task When_Matrix_5x1_Rotate_1()
         {
-            var result = Rotate(5, 1, 1).GetGeneratedMatrix();
+            var matrix = await Rotate(5, 1, 1);
+            var result = matrix.GetGeneratedMatrix();
 
             Assert.AreEqual(5, result[0, 0]);
             Assert.AreEqual(1, result[1, 0]);
@@ -38,9 +42,10 @@ namespace IntegrationTest
         }
 
         [Test]
-        public void When_Matrix_1x5_Rotate_1()
+        public async Task When_Matrix_1x5_Rotate_1()
         {
-            var result = Rotate(1, 5, 1).GetGeneratedMatrix();
+            var matrix = await Rotate(1, 5, 1);
+            var result = matrix.GetGeneratedMatrix();
 
             Assert.AreEqual(5, result[0, 0]);
             Assert.AreEqual(1, result[0, 1]);
@@ -50,27 +55,30 @@ namespace IntegrationTest
         }
 
         [Test]
-        public void When_Matrix_2x1_Rotate_0()
+        public async Task When_Matrix_2x1_Rotate_0()
         {
-            var result = Rotate(2, 1, 0).GetGeneratedMatrix();
+            var matrix = await Rotate(2, 1, 0);
+            var result = matrix.GetGeneratedMatrix();
 
             Assert.AreEqual(1, result[0, 0]);
             Assert.AreEqual(2, result[1, 0]);
         }
 
         [Test]
-        public void When_Matrix_2x1_Rotate_1()
+        public async Task When_Matrix_2x1_Rotate_1()
         {
-            var result = Rotate(2, 1, 1).GetGeneratedMatrix();
+            var matrix = await Rotate(2, 1, 1);
+            var result = matrix.GetGeneratedMatrix();
 
             Assert.AreEqual(2, result[0, 0]);
             Assert.AreEqual(1, result[1, 0]);
         }
 
         [Test]
-        public void When_Matrix_2x1_Rotate_2()
+        public async Task When_Matrix_2x1_Rotate_2()
         {
-            var result = Rotate(2, 1, 2).GetGeneratedMatrix();
+            var matrix = await Rotate(2, 1, 2);
+            var result = matrix.GetGeneratedMatrix();
 
             Assert.AreEqual(1, result[0, 0]);
             Assert.AreEqual(2, result[1, 0]);
@@ -79,9 +87,10 @@ namespace IntegrationTest
 
 
         [Test]
-        public void When_Matrix_2x2_Rotate_0()
+        public async Task When_Matrix_2x2_Rotate_0()
         {
-            var result = Rotate(2, 2, 0).GetGeneratedMatrix();
+            var matrix = await Rotate(2, 2, 0);
+            var result = matrix.GetGeneratedMatrix();
 
             Assert.AreEqual(1, result[0, 0]);
             Assert.AreEqual(2, result[0, 1]);
@@ -90,9 +99,10 @@ namespace IntegrationTest
         }
 
         [Test]
-        public void When_Matrix_2x2_Rotate_1()
+        public async Task When_Matrix_2x2_Rotate_1()
         {
-            var result = Rotate(2, 2, 1).GetGeneratedMatrix();
+            var matrix = await Rotate(2, 2, 1);
+            var result = matrix.GetGeneratedMatrix();
 
             Assert.AreEqual(2, result[0, 0]);
             Assert.AreEqual(4, result[0, 1]);
@@ -101,9 +111,10 @@ namespace IntegrationTest
         }
 
         [Test]
-        public void When_Matrix_2x2_Rotate_2()
+        public async Task When_Matrix_2x2_Rotate_2()
         {
-            var result = Rotate(2, 2, 2).GetGeneratedMatrix();
+            var matrix = await Rotate(2, 2, 2);
+            var result = matrix.GetGeneratedMatrix();
 
             Assert.AreEqual(4, result[0, 0]);
             Assert.AreEqual(3, result[0, 1]);
@@ -112,9 +123,10 @@ namespace IntegrationTest
         }
 
         [Test]
-        public void When_Matrix_2x2_Rotate_3()
+        public async Task When_Matrix_2x2_Rotate_3()
         {
-            var result = Rotate(2, 2, 3).GetGeneratedMatrix();
+            var matrix = await Rotate(2, 2, 3);
+            var result = matrix.GetGeneratedMatrix();
 
             Assert.AreEqual(3, result[0, 0]);
             Assert.AreEqual(1, result[0, 1]);
@@ -123,9 +135,10 @@ namespace IntegrationTest
         }
 
         [Test]
-        public void When_Matrix_2x2_Rotate_4()
+        public async Task When_Matrix_2x2_Rotate_4()
         {
-            var result = Rotate(2, 2, 4).GetGeneratedMatrix();
+            var matrix = await Rotate(2, 2, 4);
+            var result = matrix.GetGeneratedMatrix();
 
             Assert.AreEqual(1, result[0, 0]);
             Assert.AreEqual(2, result[0, 1]);
@@ -134,9 +147,10 @@ namespace IntegrationTest
         }
 
         [Test]
-        public void When_Matrix_2x2_Rotate_5()
+        public async Task When_Matrix_2x2_Rotate_5()
         {
-            var result = Rotate(2, 2, 5).GetGeneratedMatrix();
+            var matrix = await Rotate(2, 2, 5);
+            var result = matrix.GetGeneratedMatrix();
 
             Assert.AreEqual(2, result[0, 0]);
             Assert.AreEqual(4, result[0, 1]);
@@ -147,9 +161,10 @@ namespace IntegrationTest
 
 
         [Test]
-        public void When_Matrix_3x2_Rotate_1()
+        public async Task When_Matrix_3x2_Rotate_1()
         {
-            var result = Rotate(3, 2, 1).GetGeneratedMatrix();
+            var matrix = await Rotate(3, 2, 1);
+            var result = matrix.GetGeneratedMatrix();
 
             Assert.AreEqual(2, result[0, 0]);
             Assert.AreEqual(4, result[0, 1]);
@@ -161,9 +176,10 @@ namespace IntegrationTest
 
 
         [Test]
-        public void When_Matrix_4x4_Rotate_1()
+        public async Task When_Matrix_4x4_Rotate_1()
         {
-            var result = Rotate(4, 4, 1).GetGeneratedMatrix();
+            var matrix = await Rotate(4, 4, 1);
+            var result = matrix.GetGeneratedMatrix();
 
             Assert.AreEqual(2, result[0, 0]);
             Assert.AreEqual(3, result[0, 1]);
@@ -186,9 +202,10 @@ namespace IntegrationTest
             Assert.AreEqual(15, result[3, 3]);
         }
 
-        public void When_Matrix_4x4_Rotate_2()
+        public async Task When_Matrix_4x4_Rotate_2()
         {
-            var result = Rotate(4, 4, 2).GetGeneratedMatrix();
+            var matrix = await Rotate(4, 4, 2);
+            var result = matrix.GetGeneratedMatrix();
 
             Assert.AreEqual(3, result[0, 0]);
             Assert.AreEqual(4, result[0, 1]);
