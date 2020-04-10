@@ -1,5 +1,6 @@
 ﻿using MatrixRotation.Matrix2D;
 using System;
+using System.Threading.Tasks;
 
 namespace MatrixRotation
 {
@@ -20,7 +21,9 @@ namespace MatrixRotation
 
             bool print = GetBoolQuestion("Print matrix?");
 
-            matrixRotation(rows, columns, random, rotations, print);
+            matrixRotation(rows, columns, random, rotations, print)
+                .GetAwaiter()
+                .GetResult();
         }
 
         private static bool GetBoolQuestion(string message)
@@ -31,14 +34,14 @@ namespace MatrixRotation
             return (strResponse.ToLower().Trim() == "1");
         }
 
-        static void matrixRotation(int rows, int columns, bool random, int rotations, bool print)
+        static async Task matrixRotation(int rows, int columns, bool random, int rotations, bool print)
         {
             var watch = System.Diagnostics.Stopwatch.StartNew();
 
             Matrix matrix = new Matrix(rows, columns, random);
 
             MatrixRotate matrixRotation = new MatrixRotate(matrix, print);
-            matrixRotation.Rotate(rotations);
+            await matrixRotation.Rotate(rotations);
 
             watch.Stop();
 

@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Drawing;
+using System.Threading.Tasks;
 
 namespace MatrixRotation.Matrix2D
 {
@@ -14,7 +17,7 @@ namespace MatrixRotation.Matrix2D
             _printMatrix = printMatrix;
         }
 
-        public Matrix Rotate(int numberRotations)
+        public async Task<Matrix> Rotate(int numberRotations)
         {
             PrintMatrix();
 
@@ -24,10 +27,52 @@ namespace MatrixRotation.Matrix2D
                 return Matrix;
             }
 
+            int elementsByTask = 1000 * 1000;
+
+            List<Task> taskList = new List<Task> { };
+
+            int initialDeep = 0;
+            int taskDeepElementsAssigned = 0;
             for (int i = 0; i < Matrix.Deep; i++)
             {
-                RotateMatrixLineDeep(i, numberRotations);
+                int currentDeepRows = Matrix.Rows - (i * 2);
+                int currentDeepColumns = Matrix.Columns - (i * 2);
+
+                int nextDeepRows = Matrix.Rows - ((i + 1) * 2);
+                int nextDeepColumns = Matrix.Columns - ((i + 1) * 2);
+
+                int matrixElementsCurrentDeep = currentDeepRows * currentDeepColumns;
+                int matrixElementsNextDeep = nextDeepRows * nextDeepColumns;
+
+                int currentDeepElements = matrixElementsCurrentDeep - matrixElementsNextDeep;
+
+                taskDeepElementsAssigned += currentDeepElements;
+
+                if(taskDeepElementsAssigned >= elementsByTask || i == Matrix.Deep - 1)
+                {
+                    int initDeep = initialDeep;
+                    int endDeep = i;
+                    int taskNumber = taskList.Count;
+
+                    Task task = Task.Run(() =>
+                        {
+                            System.Diagnostics.Debug.WriteLine($"------------------------- start task # {taskNumber} {initDeep}:{endDeep}");
+                            for (int iDeep = initDeep; iDeep <= endDeep; iDeep++)
+                            {
+                                RotateMatrixLineDeep(iDeep, numberRotations);
+                            }
+                            System.Diagnostics.Debug.WriteLine($"------------------------- end task # {taskNumber} {initDeep}:{endDeep}");
+                        }
+                    );
+
+                    taskList.Add(task);
+
+                    initialDeep = i + 1;
+                    taskDeepElementsAssigned = 0;
+                }
             }
+
+            await Task.WhenAll(taskList);
 
             PrintMatrix();
 
